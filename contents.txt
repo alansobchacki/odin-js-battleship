@@ -1,0 +1,6 @@
+This is a basic skeleton app containing:
+
+- webpack with CSS support
+- webpack HTML plugin
+- eslint
+- prettier (without eslint conflicts)
