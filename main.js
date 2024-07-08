@@ -1,1 +1,1 @@
-(()=>{"use strict";const s=class{constructor(s){this.size=s}};!function(){const t=new s(2);console.log(t),alert("aaa")}()})();
+(()=>{"use strict";const s=class{constructor(s){if(!Number.isInteger(s))throw new Error("Ship size must be an integer");if(s<2||s>5)throw new Error("Invalid ship size");this.size=s,this.health=s,this.sunk=!1}};!function(){const t=new s(5);console.log(t),alert("aaa")}()})();
