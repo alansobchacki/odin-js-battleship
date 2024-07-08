@@ -4,6 +4,4 @@ class Ship {
   }
 }
 
-const battleship = Ship.new(2);
-
-export default battleship;
+export default Ship;

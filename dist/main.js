@@ -1,1 +1,1 @@
-console.log("aaa"),alert("aaa");
+(()=>{"use strict";const s=class{constructor(s){this.size=s}};!function(){const t=new s(2);console.log(t),alert("aaa")}()})();

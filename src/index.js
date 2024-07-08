@@ -1,5 +1,9 @@
+import Ship from "./ship.js";
+
 function testing() {
-  console.log("aaa");
+  const boat = new Ship(2);
+
+  console.log(boat);
   alert("aaa");
 }
 
