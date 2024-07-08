@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import Ship from "./ship";
+import Ship from "./ship.js";
 
 // a valid ship size is any value ranging from 2 to 5
 describe("Ship class", () => {

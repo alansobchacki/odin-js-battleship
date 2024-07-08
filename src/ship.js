@@ -21,7 +21,7 @@ class Ship {
   }
 
   isSunk() {
-    this.sunk = true;
+    return (this.sunk = true);
   }
 }
 
