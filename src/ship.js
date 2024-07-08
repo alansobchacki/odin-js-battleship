@@ -14,7 +14,9 @@ class Ship {
   }
 
   hit() {
-    if (this.health >= 1) this.health -= 1;
+    if (this.sunk) return;
+
+    this.health -= 1;
     if (this.health == 0) this.isSunk();
   }
 

@@ -42,4 +42,13 @@ describe("Ship class", () => {
 
     expect(ship.sunk).toBe(true);
   });
+
+  test("should not be able to be hit if it is already sunk", () => {
+    const ship = new Ship(2);
+    ship.hit();
+    ship.hit();
+    ship.hit();
+
+    expect(ship.health).toBe(0);
+  });
 });
