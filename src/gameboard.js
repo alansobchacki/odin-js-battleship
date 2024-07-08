@@ -10,6 +10,18 @@ class Gameboard {
     this.submarineTwo = new Ship(3, "s2");
     this.destroyerOne = new Ship(2, "d1");
     this.destroyerTwo = new Ship(2, "d2");
+    this.shipsSunk = 0;
+
+    // This object helps to handle the logic of receiveAttack()
+    this.ships = {
+      ca: this.carrier,
+      ba: this.battleship,
+      cr: this.cruiser,
+      s1: this.submarineOne,
+      s2: this.submarineTwo,
+      d1: this.destroyerOne,
+      d2: this.destroyerTwo,
+    };
   }
 
   initializeBoard() {
@@ -24,9 +36,9 @@ class Gameboard {
     return board;
   }
 
-  // direction is a boolean value that is true by default, indicating a horizontal position
+  // When direction is true (default value), it indicates a horizontal position
   // If place() receives false as an argument, it indicates a vertical position
-  place(ship, initialCoordinates, direction) {
+  place(ship, initialCoordinates, direction = true) {
     const length = ship.size;
     const square = ship.initials;
     let column = initialCoordinates[0];
@@ -57,6 +69,29 @@ class Gameboard {
       } else {
         this.board[column + i][row] = square;
       }
+    }
+  }
+
+  receiveAttack(coordinates) {
+    const column = coordinates[0];
+    const row = coordinates[1];
+    const square = this.board[column][row];
+
+    if (square == "hit") {
+      throw new Error("Can't attack this square, it was already hit");
+    }
+
+    if (!square) {
+      this.board[column][row] = "hit";
+      return;
+    }
+
+    if (square && square !== "hit") {
+      const ship = this.ships[square];
+      this.board[column][row] = "hit";
+      ship.hit();
+
+      if (ship.sunk) this.shipsSunk += 1;
     }
   }
 }
