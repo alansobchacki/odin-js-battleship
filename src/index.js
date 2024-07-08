@@ -1,22 +1,43 @@
 import Player from "./player.js";
+import "./styles.css";
 
 const playerOne = new Player();
+// const playerTwo = new Player();
 
 function displayBoard(board) {
   const gameBoardElement = document.getElementById("game-board");
 
   board.forEach((row, rowIndex) => {
-    row.forEach((square, columnIndex) => {
+    row.forEach((_, columnIndex) => {
       const squareElement = document.createElement("div");
+      const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
+
+      squareElement.innerHTML = `<p>${squareContents}</p>`; // for debugging reasons
+
       squareElement.classList.add("square");
-      squareElement.dataset.row = rowIndex;
-      squareElement.dataset.column = columnIndex;
+
+      // Assign the onClick handler
+      squareElement.addEventListener("click", () => {
+        playerOne.gameBoard.receiveAttack([columnIndex, rowIndex]);
+        updateBoard();
+      });
+
       gameBoardElement.appendChild(squareElement);
     });
   });
 }
 
-displayBoard(playerOne.gameBoard.board);
+function updateBoard() {
+  const gameBoardElement = document.getElementById("game-board");
 
-// console.log(playerOne);
-// console.log(playerOne.gameBoard.board); // a matrix of 10x10 null values
+  Array.from(gameBoardElement.children).forEach((squareElement, index) => {
+    const rowIndex = Math.floor(index / 10);
+    const columnIndex = index % 10;
+
+    const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
+
+    squareElement.innerHTML = `<p>${squareContents}</p>`;
+  });
+}
+
+displayBoard(playerOne.gameBoard.board);
