@@ -1,5 +1,5 @@
 class Ship {
-  constructor(size) {
+  constructor(size, initials) {
     if (!Number.isInteger(size)) {
       throw new Error("Ship size must be an integer");
     }
@@ -10,6 +10,7 @@ class Ship {
 
     this.size = size;
     this.health = size;
+    this.initials = initials;
     this.sunk = false;
   }
 
