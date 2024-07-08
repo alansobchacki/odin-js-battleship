@@ -10,7 +10,7 @@ class Gameboard {
     this.submarineTwo = new Ship(3, "s2");
     this.destroyerOne = new Ship(2, "d1");
     this.destroyerTwo = new Ship(2, "d2");
-    this.shipsSunk = 0;
+    this.shipsSunk = 0; // If this value reaches 7, the player loses the game
 
     // This object helps to handle the logic of receiveAttack()
     this.ships = {

@@ -1,10 +1,22 @@
-import Ship from "./ship.js";
+import Player from "./player.js";
 
-function testing() {
-  const boat = new Ship(5);
+const playerOne = new Player();
 
-  console.log(boat);
-  alert("aaa");
+function displayBoard(board) {
+  const gameBoardElement = document.getElementById("game-board");
+
+  board.forEach((row, rowIndex) => {
+    row.forEach((square, columnIndex) => {
+      const squareElement = document.createElement("div");
+      squareElement.classList.add("square");
+      squareElement.dataset.row = rowIndex;
+      squareElement.dataset.column = columnIndex;
+      gameBoardElement.appendChild(squareElement);
+    });
+  });
 }
 
-testing();
+displayBoard(playerOne.gameBoard.board);
+
+// console.log(playerOne);
+// console.log(playerOne.gameBoard.board); // a matrix of 10x10 null values
