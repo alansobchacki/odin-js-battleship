@@ -34,28 +34,16 @@ describe("Gameboard class", () => {
       initials: "cr",
       sunk: false,
     });
-    expect(gameBoard.submarineOne).toEqual({
+    expect(gameBoard.submarine).toEqual({
       health: 3,
       size: 3,
-      initials: "s1",
+      initials: "su",
       sunk: false,
     });
-    expect(gameBoard.submarineTwo).toEqual({
-      health: 3,
-      size: 3,
-      initials: "s2",
-      sunk: false,
-    });
-    expect(gameBoard.destroyerOne).toEqual({
+    expect(gameBoard.destroyer).toEqual({
       health: 2,
       size: 2,
-      initials: "d1",
-      sunk: false,
-    });
-    expect(gameBoard.destroyerTwo).toEqual({
-      health: 2,
-      size: 2,
-      initials: "d2",
+      initials: "de",
       sunk: false,
     });
   });
@@ -120,11 +108,11 @@ describe("Gameboard class", () => {
   test("should allow ships to be sunk if all their squares are hit", () => {
     const gameBoard = new Gameboard();
 
-    gameBoard.place(gameBoard.destroyerOne, [0, 0], true);
+    gameBoard.place(gameBoard.destroyer, [0, 0], true);
     gameBoard.receiveAttack([0, 0]);
     gameBoard.receiveAttack([0, 1]);
 
-    expect(gameBoard.destroyerOne.sunk).toBe(true);
+    expect(gameBoard.destroyer.sunk).toBe(true);
   });
 
   test("should allow players to hit empty squares", () => {
@@ -133,17 +121,26 @@ describe("Gameboard class", () => {
     gameBoard.place(gameBoard.battleship, [0, 0], true);
     gameBoard.receiveAttack([0, 6]);
 
-    expect(gameBoard.board[0][6]).toBe("hit");
+    expect(gameBoard.board[0][6]).toBe("miss");
     expect(gameBoard.battleship.health).toBe(4);
   });
 
-  test("should not allow players to hit a square that is already hit", () => {
+  test("should not allow players to hit a square that was already attacked", () => {
     const gameBoard = new Gameboard();
 
-    gameBoard.board[0][6] = "hit";
+    // if the player hits a ship square that was already hit
+    gameBoard.board[0][6] = "miss";
 
     expect(() => {
       gameBoard.receiveAttack([0, 6]);
+    }).toThrow("Can't attack this square, it was already hit");
+
+    // if the player his an empty square that was already hit
+    gameBoard.place(gameBoard.battleship, [0, 0], false);
+    gameBoard.receiveAttack([0, 0]);
+
+    expect(() => {
+      gameBoard.receiveAttack([0, 0]);
     }).toThrow("Can't attack this square, it was already hit");
   });
 });

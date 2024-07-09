@@ -6,21 +6,17 @@ class Gameboard {
     this.carrier = new Ship(5, "ca");
     this.battleship = new Ship(4, "ba");
     this.cruiser = new Ship(3, "cr");
-    this.submarineOne = new Ship(3, "s1");
-    this.submarineTwo = new Ship(3, "s2");
-    this.destroyerOne = new Ship(2, "d1");
-    this.destroyerTwo = new Ship(2, "d2");
-    this.shipsSunk = 0; // If this value reaches 7, the player loses the game
+    this.submarine = new Ship(3, "su");
+    this.destroyer = new Ship(2, "de");
+    this.shipsSunk = 0; // If this value reaches 5, the player loses the game
 
     // This object helps to handle the logic of receiveAttack()
     this.ships = {
       ca: this.carrier,
       ba: this.battleship,
       cr: this.cruiser,
-      s1: this.submarineOne,
-      s2: this.submarineTwo,
-      d1: this.destroyerOne,
-      d2: this.destroyerTwo,
+      su: this.submarine,
+      de: this.destroyer,
     };
   }
 
@@ -77,16 +73,16 @@ class Gameboard {
     const row = coordinates[1];
     const square = this.board[column][row];
 
-    if (square == "hit") {
+    if (square == "hit" || square == "miss") {
       throw new Error("Can't attack this square, it was already hit");
     }
 
     if (!square) {
-      this.board[column][row] = "hit";
+      this.board[column][row] = "miss";
       return;
     }
 
-    if (square && square !== "hit") {
+    if ((square && square !== "hit") || (square && square !== "miss")) {
       const ship = this.ships[square];
       this.board[column][row] = "hit";
       ship.hit();

@@ -2,7 +2,6 @@ import Player from "./player.js";
 import "./styles.css";
 
 const playerOne = new Player();
-// const playerTwo = new Player();
 
 function displayBoard(board) {
   const gameBoardElement = document.getElementById("game-board");
@@ -10,13 +9,11 @@ function displayBoard(board) {
   board.forEach((row, rowIndex) => {
     row.forEach((_, columnIndex) => {
       const squareElement = document.createElement("div");
-      const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
-
-      squareElement.innerHTML = `<p>${squareContents}</p>`; // for debugging reasons
+      // const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
+      // squareElement.innerHTML = `<p>${squareContents}</p>`;
 
       squareElement.classList.add("square");
 
-      // Assign the onClick handler
       squareElement.addEventListener("click", () => {
         playerOne.gameBoard.receiveAttack([columnIndex, rowIndex]);
         updateBoard();
@@ -36,7 +33,7 @@ function updateBoard() {
 
     const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
 
-    squareElement.innerHTML = `<p>${squareContents}</p>`;
+    if (squareContents == "hit") squareElement.innerHTML = `X`;
   });
 }
 
