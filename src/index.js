@@ -3,8 +3,10 @@
 import Player from "./player.js";
 import "./styles.css";
 
+// initially hardcoded - must change eventually to allow players to pick a game of hotseat or vs machine
+// these settings will build a game of player vs machine
 const playerOne = new Player();
-const playerTwo = new Player();
+const playerTwo = new Player(true);
 
 // This section handles game setup - the initial greetings, player picking, and ship placement
 function greetings() {
@@ -41,12 +43,7 @@ function displayBoard(board, player) {
 
   board.forEach((row, rowIndex) => {
     row.forEach((cell, columnIndex) => {
-      const squareElement = createSquareElement(
-        rowIndex,
-        columnIndex,
-        cell,
-        player,
-      );
+      const squareElement = createSquareElement(rowIndex, columnIndex, cell);
       boardElement.appendChild(squareElement);
     });
   });
@@ -58,7 +55,7 @@ function getPlayerBoardElement(player) {
     : document.getElementById("game-board-two");
 }
 
-function createSquareElement(rowIndex, columnIndex, cellContent, player) {
+function createSquareElement(rowIndex, columnIndex, cellContent) {
   const squareElement = document.createElement("div");
   squareElement.classList.add("square");
 
@@ -73,9 +70,11 @@ function createSquareElement(rowIndex, columnIndex, cellContent, player) {
   }
 
   squareElement.addEventListener("click", () => {
-    const currentPlayer = player === "one" ? playerOne : playerTwo;
-    currentPlayer.gameBoard.receiveAttack([rowIndex, columnIndex]);
-    updateBoard(player);
+    playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
+    playerTwo.attackEnemyPlayer(playerOne.gameBoard);
+
+    updateBoard("one");
+    updateBoard("two");
   });
 
   return squareElement;
@@ -84,7 +83,6 @@ function createSquareElement(rowIndex, columnIndex, cellContent, player) {
 function updateBoard(player) {
   const currentPlayer = player === "one" ? playerOne : playerTwo;
 
-  // add a function here to check if the game is over (if given player has 5 sunken ships)
   displayBoard(currentPlayer.gameBoard.board, player);
 }
 

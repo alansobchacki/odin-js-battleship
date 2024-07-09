@@ -69,15 +69,15 @@ class Gameboard {
   }
 
   placeRandom() {
-    this.randomizer(this.carrier);
-    this.randomizer(this.battleship);
-    this.randomizer(this.cruiser);
-    this.randomizer(this.submarine);
-    this.randomizer(this.destroyer);
+    this.shipPlacementRandomizer(this.carrier);
+    this.shipPlacementRandomizer(this.battleship);
+    this.shipPlacementRandomizer(this.cruiser);
+    this.shipPlacementRandomizer(this.submarine);
+    this.shipPlacementRandomizer(this.destroyer);
   }
 
   // helper function for placeRandom
-  randomizer(ship) {
+  shipPlacementRandomizer(ship) {
     let validPlacement = false;
 
     while (!validPlacement) {
