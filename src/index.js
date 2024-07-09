@@ -1,50 +1,96 @@
+// index.js will handle DOM manipulation
+
 import Player from "./player.js";
 import "./styles.css";
 
 const playerOne = new Player();
+const playerTwo = new Player();
 
-function displayBoard(board) {
-  const gameBoardElement = document.getElementById("game-board");
+// This section handles game setup - the initial greetings, player picking, and ship placement
+function greetings() {
+  const greetingsElement = document.getElementById("greetings");
+  const button = document.createElement("button");
+  button.textContent = "Do you wish to play?";
+
+  button.addEventListener("click", setupGame);
+
+  greetingsElement.innerHTML = `<h1>Battleship</h1>`;
+  greetingsElement.appendChild(button);
+}
+
+function hideGreetings() {
+  const greetingsElement = document.getElementById("greetings");
+  greetingsElement.innerHTML = ``;
+}
+
+function setupGame() {
+  hideGreetings();
+
+  playerOne.gameBoard.place(playerOne.gameBoard.cruiser, [0, 0], true); // temporary
+  playerOne.gameBoard.place(playerOne.gameBoard.submarine, [3, 3], false); // temporary
+
+  playerTwo.gameBoard.place(playerTwo.gameBoard.cruiser, [0, 0], true); // temporary
+  playerTwo.gameBoard.place(playerTwo.gameBoard.submarine, [3, 3], false); // temporary
+
+  displayBoard(playerOne.gameBoard.board, "one");
+  displayBoard(playerTwo.gameBoard.board, "two");
+}
+
+function placeBoats() {}
+
+// This section handles the visuals of the actual gameplay
+function displayBoard(board, player) {
+  const boardElement = getPlayerBoardElement(player);
+
+  boardElement.innerHTML = "";
 
   board.forEach((row, rowIndex) => {
-    row.forEach((_, columnIndex) => {
-      const squareElement = document.createElement("div");
-      squareElement.classList.add("square");
-      squareElement.innerHTML = `<p>?</p>`;
-
-      squareElement.addEventListener("click", () => {
-        playerOne.gameBoard.receiveAttack([rowIndex, columnIndex]);
-        updateBoard();
-      });
-
-      gameBoardElement.appendChild(squareElement);
+    row.forEach((cell, columnIndex) => {
+      const squareElement = createSquareElement(
+        rowIndex,
+        columnIndex,
+        cell,
+        player,
+      );
+      boardElement.appendChild(squareElement);
     });
   });
 }
 
-function updateBoard() {
-  const gameBoardElement = document.getElementById("game-board");
-
-  Array.from(gameBoardElement.children).forEach((squareElement, index) => {
-    const rowIndex = Math.floor(index / 10);
-    const columnIndex = index % 10;
-
-    const squareContents = playerOne.gameBoard.board[rowIndex][columnIndex];
-    squareElement.innerHTML = `<p>?</p>`;
-
-    if (squareContents == "miss") {
-      squareElement.innerHTML = `❌`;
-      squareElement.classList.add("miss");
-    }
-
-    if (squareContents == "hit") {
-      squareElement.innerHTML = `✔️`;
-      squareElement.classList.add("hit");
-    }
-  });
+function getPlayerBoardElement(player) {
+  return player === "one"
+    ? document.getElementById("game-board")
+    : document.getElementById("game-board-two");
 }
 
-playerOne.gameBoard.place(playerOne.gameBoard.cruiser, [0, 0], true);
-displayBoard(playerOne.gameBoard.board);
+function createSquareElement(rowIndex, columnIndex, cellContent, player) {
+  const squareElement = document.createElement("div");
+  squareElement.classList.add("square");
 
-console.log(playerOne.gameBoard.board);
+  if (cellContent === "miss") {
+    squareElement.innerHTML = `❌`;
+    squareElement.classList.add("miss");
+  } else if (cellContent === "hit") {
+    squareElement.innerHTML = `✔️`;
+    squareElement.classList.add("hit");
+  } else {
+    squareElement.innerHTML = `<p>?</p>`;
+  }
+
+  squareElement.addEventListener("click", () => {
+    const currentPlayer = player === "one" ? playerOne : playerTwo;
+    currentPlayer.gameBoard.receiveAttack([rowIndex, columnIndex]);
+    updateBoard(player);
+  });
+
+  return squareElement;
+}
+
+function updateBoard(player) {
+  const currentPlayer = player === "one" ? playerOne : playerTwo;
+
+  // add a function here to check if the game is over (if given player has 5 sunken ships)
+  displayBoard(currentPlayer.gameBoard.board, player);
+}
+
+greetings();
