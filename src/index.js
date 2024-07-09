@@ -25,25 +25,30 @@ function hideGreetings() {
   greetingsElement.innerHTML = ``;
 }
 
+// initially hardcoded - must change eventually to allow players to pick a game of hotseat or vs machine
 function setupGame() {
   hideGreetings();
 
   playerOne.gameBoard.placeRandom();
   playerTwo.gameBoard.placeRandom();
 
-  displayBoard(playerOne.gameBoard.board, "one");
-  displayBoard(playerTwo.gameBoard.board, "two");
+  displayBoard(playerOne.gameBoard.board, "one", false);
+  displayBoard(playerTwo.gameBoard.board, "two", true);
 }
 
 // This section handles the visuals of the actual gameplay
-function displayBoard(board, player) {
+function displayBoard(board, player, isMachine) {
   const boardElement = getPlayerBoardElement(player);
-
   boardElement.innerHTML = "";
 
   board.forEach((row, rowIndex) => {
     row.forEach((cell, columnIndex) => {
-      const squareElement = createSquareElement(rowIndex, columnIndex, cell);
+      const squareElement = createSquareElement(
+        rowIndex,
+        columnIndex,
+        cell,
+        isMachine,
+      );
       boardElement.appendChild(squareElement);
     });
   });
@@ -55,7 +60,7 @@ function getPlayerBoardElement(player) {
     : document.getElementById("game-board-two");
 }
 
-function createSquareElement(rowIndex, columnIndex, cellContent) {
+function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
   const squareElement = document.createElement("div");
   squareElement.classList.add("square");
 
@@ -69,21 +74,17 @@ function createSquareElement(rowIndex, columnIndex, cellContent) {
     squareElement.innerHTML = `<p>?</p>`;
   }
 
-  squareElement.addEventListener("click", () => {
-    playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
-    playerTwo.attackEnemyPlayer(playerOne.gameBoard);
+  if (isMachine) {
+    squareElement.addEventListener("click", () => {
+      playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
+      playerTwo.attackEnemyPlayer(playerOne.gameBoard);
 
-    updateBoard("one");
-    updateBoard("two");
-  });
+      displayBoard(playerOne.gameBoard.board, "one", false);
+      displayBoard(playerTwo.gameBoard.board, "two", true);
+    });
+  }
 
   return squareElement;
-}
-
-function updateBoard(player) {
-  const currentPlayer = player === "one" ? playerOne : playerTwo;
-
-  displayBoard(currentPlayer.gameBoard.board, player);
 }
 
 greetings();
