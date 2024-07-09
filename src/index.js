@@ -9,13 +9,11 @@ function displayBoard(board) {
   board.forEach((row, rowIndex) => {
     row.forEach((_, columnIndex) => {
       const squareElement = document.createElement("div");
-      // const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
-      // squareElement.innerHTML = `<p>${squareContents}</p>`;
-
       squareElement.classList.add("square");
+      squareElement.innerHTML = `<p>?</p>`;
 
       squareElement.addEventListener("click", () => {
-        playerOne.gameBoard.receiveAttack([columnIndex, rowIndex]);
+        playerOne.gameBoard.receiveAttack([rowIndex, columnIndex]);
         updateBoard();
       });
 
@@ -31,10 +29,22 @@ function updateBoard() {
     const rowIndex = Math.floor(index / 10);
     const columnIndex = index % 10;
 
-    const squareContents = playerOne.gameBoard.board[columnIndex][rowIndex];
+    const squareContents = playerOne.gameBoard.board[rowIndex][columnIndex];
+    squareElement.innerHTML = `<p>?</p>`;
 
-    if (squareContents == "hit") squareElement.innerHTML = `X`;
+    if (squareContents == "miss") {
+      squareElement.innerHTML = `❌`;
+      squareElement.classList.add("miss");
+    }
+
+    if (squareContents == "hit") {
+      squareElement.innerHTML = `✔️`;
+      squareElement.classList.add("hit");
+    }
   });
 }
 
+playerOne.gameBoard.place(playerOne.gameBoard.cruiser, [0, 0], true);
 displayBoard(playerOne.gameBoard.board);
+
+console.log(playerOne.gameBoard.board);

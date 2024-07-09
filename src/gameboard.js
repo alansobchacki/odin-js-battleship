@@ -37,12 +37,12 @@ class Gameboard {
   place(ship, initialCoordinates, direction = true) {
     const length = ship.size;
     const square = ship.initials;
-    let column = initialCoordinates[0];
-    let row = initialCoordinates[1];
+    let row = initialCoordinates[0];
+    let column = initialCoordinates[1];
 
     if (
-      (direction && row + length > 10) || // Horizontal
-      (!direction && column + length > 10) // Vertical
+      (direction && column + length > 10) || // Horizontal
+      (!direction && row + length > 10) // Vertical
     ) {
       throw new Error("Can't place ship here, index out of bounds");
     }
@@ -61,30 +61,30 @@ class Gameboard {
 
     for (let i = 0; i < length; i++) {
       if (direction) {
-        this.board[column][row + i] = square;
+        this.board[row][column + i] = square;
       } else {
-        this.board[column + i][row] = square;
+        this.board[row + i][column] = square;
       }
     }
   }
 
   receiveAttack(coordinates) {
-    const column = coordinates[0];
-    const row = coordinates[1];
-    const square = this.board[column][row];
+    const column = coordinates[1];
+    const row = coordinates[0];
+    const square = this.board[row][column];
 
     if (square == "hit" || square == "miss") {
       throw new Error("Can't attack this square, it was already hit");
     }
 
     if (!square) {
-      this.board[column][row] = "miss";
+      this.board[row][column] = "miss";
       return;
     }
 
     if ((square && square !== "hit") || (square && square !== "miss")) {
       const ship = this.ships[square];
-      this.board[column][row] = "hit";
+      this.board[row][column] = "hit";
       ship.hit();
 
       if (ship.sunk) this.shipsSunk += 1;
