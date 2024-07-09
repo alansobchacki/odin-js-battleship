@@ -49,11 +49,11 @@ class Gameboard {
 
     for (let i = 0; i < length; i++) {
       if (direction) {
-        if (this.board[column][row + i] !== null) {
+        if (this.board[row][column + i] !== null) {
           throw new Error("Can't place ship here, there's already a ship here");
         }
       } else {
-        if (this.board[column + i][row] !== null) {
+        if (this.board[row + i][column] !== null) {
           throw new Error("Can't place ship here, there's already a ship here");
         }
       }
@@ -68,9 +68,35 @@ class Gameboard {
     }
   }
 
+  placeRandom() {
+    this.randomizer(this.carrier);
+    this.randomizer(this.battleship);
+    this.randomizer(this.cruiser);
+    this.randomizer(this.submarine);
+    this.randomizer(this.destroyer);
+  }
+
+  // helper function for placeRandom
+  randomizer(ship) {
+    let validPlacement = false;
+
+    while (!validPlacement) {
+      try {
+        const randomBoolean = Math.random() >= 0.5;
+        const randomRow = Math.floor(Math.random() * 10);
+        const randomCol = Math.floor(Math.random() * 10);
+
+        this.place(ship, [randomRow, randomCol], randomBoolean);
+        validPlacement = true;
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+  }
+
   receiveAttack(coordinates) {
-    const column = coordinates[1];
     const row = coordinates[0];
+    const column = coordinates[1];
     const square = this.board[row][column];
 
     if (square == "hit" || square == "miss") {

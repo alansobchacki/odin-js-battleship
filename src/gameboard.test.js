@@ -90,7 +90,7 @@ describe("Gameboard class", () => {
 
     // attempts to place a cruiser in a spot where there's already a battleship
     expect(() => {
-      gameBoard.place(gameBoard.cruiser, [2, 0], true);
+      gameBoard.place(gameBoard.cruiser, [0, 2], true);
     }).toThrow("Can't place ship here, there's already a ship here");
   });
 

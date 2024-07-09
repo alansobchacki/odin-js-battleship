@@ -26,17 +26,12 @@ function hideGreetings() {
 function setupGame() {
   hideGreetings();
 
-  playerOne.gameBoard.place(playerOne.gameBoard.cruiser, [0, 0], true); // temporary
-  playerOne.gameBoard.place(playerOne.gameBoard.submarine, [3, 3], false); // temporary
-
-  playerTwo.gameBoard.place(playerTwo.gameBoard.cruiser, [0, 0], true); // temporary
-  playerTwo.gameBoard.place(playerTwo.gameBoard.submarine, [3, 3], false); // temporary
+  playerOne.gameBoard.placeRandom();
+  playerTwo.gameBoard.placeRandom();
 
   displayBoard(playerOne.gameBoard.board, "one");
   displayBoard(playerTwo.gameBoard.board, "two");
 }
-
-function placeBoats() {}
 
 // This section handles the visuals of the actual gameplay
 function displayBoard(board, player) {
