@@ -17,6 +17,23 @@ body {
   margin-top: 10px;
 }
 
+#ship-placement {
+  display: flex;
+  flex-direction: column;
+}
+
+.ship {
+  display: flex;
+  flex-direction: row;
+}
+
+.ship .square {
+  background-color: lightgreen;
+  color: lightgreen;
+  min-width: 35px;
+  min-height: 35px;
+}
+
 #boards {
   display: flex;
   flex-direction: row;
@@ -26,8 +43,8 @@ body {
   padding-bottom: 2%;
 }
 
-#left-board,
-#right-board {
+#player-one,
+#player-two {
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -54,6 +71,14 @@ body {
 
 .square:hover {
   cursor: pointer;
+}
+
+.square.drag-over {
+  background-color: pink; /* Visual cue for valid drop target */
+}
+
+.own {
+  background-color: lightgreen;
 }
 
 .miss {

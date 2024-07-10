@@ -3,25 +3,24 @@
 import Player from "./player.js";
 import "./styles.css";
 
-// initially hardcoded - must change eventually to allow players to pick a game of hotseat or vs machine
-// these settings will build a game of player vs machine
+// initializes two players: a human player and a machine player
 const playerOne = new Player();
 const playerTwo = new Player(true);
 
 // This section handles game setup - the initial greetings, player picking, and ship placement
 function greetings() {
   const greetingsElement = document.getElementById("greetings");
-  const button = document.createElement("button");
-  button.textContent = "Easy";
+  const easyMode = document.createElement("button");
+  easyMode.textContent = "Easy";
 
-  button.addEventListener("click", setupGame);
+  easyMode.addEventListener("click", setupGame);
 
   greetingsElement.innerHTML = `
     <h1>Battleship</h1>
     <p>Choose Your Difficulty:</p>
   `;
 
-  greetingsElement.appendChild(button);
+  greetingsElement.appendChild(easyMode);
 }
 
 function hideGreetings() {
@@ -29,7 +28,6 @@ function hideGreetings() {
   greetingsElement.innerHTML = ``;
 }
 
-// initially hardcoded - must change eventually to allow players to pick a game of hotseat or vs machine
 function setupGame() {
   hideGreetings();
   placeShips();
@@ -38,11 +36,59 @@ function setupGame() {
   displayMessages();
 }
 
+// this section will handle ship placement
 function placeShips() {
+  const shipElement = document.getElementById("ship-placement");
+
+  shipElement.innerHTML = `
+  <p>Place Your Ships</p>
+
+  <p>Cruiser</p>
+  <div class="ship" draggable="true" id="cruiser">
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+  </div>
+
+  <p>Battleship</p>
+  <div class="ship" draggable="true" id="battleship">
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+  </div>
+
+  <p>Cruiser</p>
+  <div class="ship" draggable="true" id="cruiser2">
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+  </div>
+
+  <p>Submarine</p>
+  <div class="ship" draggable="true" id="submarine">
+    <div class="square">?</div>
+    <div class="square">?</div>
+    <div class="square">?</div>
+  </div>
+
+  <p>Destroyer</p>
+  <div class="ship" draggable="true" id="destroyer">
+    <div class="square">?</div>
+    <div class="square">?</div>
+  </div>
+  `;
+
+  // addDragAndDropEventListeners();
   playerOne.gameBoard.placeRandom();
+
+  // places ships for the machine player
   playerTwo.gameBoard.placeRandom();
 }
 
+// This section handles the visuals of game (displaying messages, updating squares on click)
 function displayMessages() {
   const messagesElement = document.getElementById("messages");
   const playerOneScore = checkSunkenShips(playerTwo);
@@ -54,7 +100,6 @@ function displayMessages() {
     messagesElement.innerHTML = `Game Over! ${playerOneScore == 5 ? "Player One Wins!" : "The Machine Wins!"}`;
 }
 
-// This section handles the visuals of game (building squares, updating squares on click)
 function displayBoard(board, player, isMachine) {
   const boardElement = getPlayerBoardElement(player);
   boardElement.innerHTML = "";
@@ -80,7 +125,6 @@ function getPlayerBoardElement(player) {
 
 function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
   const squareElement = document.createElement("div");
-  const gameOver = isGameOver();
   squareElement.classList.add("square");
 
   if (cellContent === "miss") {
@@ -93,7 +137,11 @@ function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
     squareElement.innerHTML = `<p>?</p>`;
   }
 
-  if (isMachine && !gameOver) {
+  if (!isMachine && cellContent) {
+    squareElement.classList.add("own");
+  }
+
+  if (isMachine && !isGameOver()) {
     squareElement.addEventListener("click", () => {
       playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
       playerTwo.attackEnemyPlayer(playerOne.gameBoard);
