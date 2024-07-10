@@ -12,11 +12,15 @@ const playerTwo = new Player(true);
 function greetings() {
   const greetingsElement = document.getElementById("greetings");
   const button = document.createElement("button");
-  button.textContent = "Do you wish to play?";
+  button.textContent = "Easy";
 
   button.addEventListener("click", setupGame);
 
-  greetingsElement.innerHTML = `<h1>Battleship</h1>`;
+  greetingsElement.innerHTML = `
+    <h1>Battleship</h1>
+    <p>Choose Your Difficulty:</p>
+  `;
+
   greetingsElement.appendChild(button);
 }
 
@@ -42,14 +46,12 @@ function placeShips() {
 function displayMessages() {
   const messagesElement = document.getElementById("messages");
   const playerOneScore = checkSunkenShips(playerTwo);
-  const playerTwoScore = checkSunkenShips(playerOne);
   const gameOver = isGameOver();
 
-  messagesElement.innerHTML = `
-    <p>${gameOver ? "Game Over!" : "Good luck!"}</p>
-    <p>${playerOneScore == 5 ? "Player One Wins!" : ""}</p>
-    <p>${playerTwoScore == 5 ? "Player Two Wins!" : ""}</p>
-  `;
+  messagesElement.innerHTML = `Good luck!`;
+
+  if (gameOver)
+    messagesElement.innerHTML = `Game Over! ${playerOneScore == 5 ? "Player One Wins!" : "The Machine Wins!"}`;
 }
 
 // This section handles the visuals of game (building squares, updating squares on click)
@@ -109,7 +111,6 @@ function updateBoard(vsMachine) {
   displayMessages();
 }
 
-// checks if the game is over
 function isGameOver() {
   const playerOneScore = checkSunkenShips(playerTwo);
   const playerTwoScore = checkSunkenShips(playerOne);

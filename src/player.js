@@ -4,7 +4,6 @@ class Player {
   constructor(isMachine = false) {
     this.gameBoard = new Gameboard();
     this.isMachine = isMachine;
-    // this.shipsSunk = this.gameboard.shipsSunk;
   }
 
   isGameOver() {
