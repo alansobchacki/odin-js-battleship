@@ -30,21 +30,22 @@ function hideGreetings() {
 
 function setupGame() {
   hideGreetings();
-  placeShips();
+  placeShips("player-one-ships");
+  placeShips("player-two-ships");
   displayBoard(playerOne.gameBoard.board, "one", false);
   displayBoard(playerTwo.gameBoard.board, "two", true);
   displayMessages();
 }
 
 // this section will handle ship placement
-function placeShips() {
-  const shipElement = document.getElementById("ship-placement");
+function placeShips(playerShips) {
+  const shipElement = document.getElementById(playerShips);
 
   shipElement.innerHTML = `
-  <p>Place Your Ships</p>
+  <br></br>
 
   <p>Cruiser</p>
-  <div class="ship" draggable="true" id="cruiser">
+  <div class="ship">
     <div class="square">?</div>
     <div class="square">?</div>
     <div class="square">?</div>
@@ -53,7 +54,7 @@ function placeShips() {
   </div>
 
   <p>Battleship</p>
-  <div class="ship" draggable="true" id="battleship">
+  <div class="ship">
     <div class="square">?</div>
     <div class="square">?</div>
     <div class="square">?</div>
@@ -61,31 +62,29 @@ function placeShips() {
   </div>
 
   <p>Cruiser</p>
-  <div class="ship" draggable="true" id="cruiser2">
+  <div class="ship">
     <div class="square">?</div>
     <div class="square">?</div>
     <div class="square">?</div>
   </div>
 
   <p>Submarine</p>
-  <div class="ship" draggable="true" id="submarine">
+  <div class="ship">
     <div class="square">?</div>
     <div class="square">?</div>
     <div class="square">?</div>
   </div>
 
   <p>Destroyer</p>
-  <div class="ship" draggable="true" id="destroyer">
+  <div class="ship">
     <div class="square">?</div>
     <div class="square">?</div>
   </div>
   `;
 
-  // addDragAndDropEventListeners();
-  playerOne.gameBoard.placeRandom();
-
-  // places ships for the machine player
-  playerTwo.gameBoard.placeRandom();
+  playerShips == "player-one-ships"
+    ? playerOne.gameBoard.placeRandom()
+    : playerTwo.gameBoard.placeRandom();
 }
 
 // This section handles the visuals of game (displaying messages, updating squares on click)
