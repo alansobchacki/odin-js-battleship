@@ -4,6 +4,11 @@ class Player {
   constructor(isMachine = false) {
     this.gameBoard = new Gameboard();
     this.isMachine = isMachine;
+    // this.shipsSunk = this.gameboard.shipsSunk;
+  }
+
+  isGameOver() {
+    if (this.gameBoard.shipsSunk == 5) return true;
   }
 
   // will only be called if you're playing against a machine

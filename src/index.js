@@ -28,15 +28,31 @@ function hideGreetings() {
 // initially hardcoded - must change eventually to allow players to pick a game of hotseat or vs machine
 function setupGame() {
   hideGreetings();
-
-  playerOne.gameBoard.placeRandom();
-  playerTwo.gameBoard.placeRandom();
-
+  placeShips();
   displayBoard(playerOne.gameBoard.board, "one", false);
   displayBoard(playerTwo.gameBoard.board, "two", true);
+  displayMessages();
 }
 
-// This section handles the visuals of the actual gameplay
+function placeShips() {
+  playerOne.gameBoard.placeRandom();
+  playerTwo.gameBoard.placeRandom();
+}
+
+function displayMessages() {
+  const messagesElement = document.getElementById("messages");
+  const playerOneScore = checkSunkenShips(playerTwo);
+  const playerTwoScore = checkSunkenShips(playerOne);
+  const gameOver = isGameOver();
+
+  messagesElement.innerHTML = `
+    <p>${gameOver ? "Game Over!" : "Good luck!"}</p>
+    <p>${playerOneScore == 5 ? "Player One Wins!" : ""}</p>
+    <p>${playerTwoScore == 5 ? "Player Two Wins!" : ""}</p>
+  `;
+}
+
+// This section handles the visuals of game (building squares, updating squares on click)
 function displayBoard(board, player, isMachine) {
   const boardElement = getPlayerBoardElement(player);
   boardElement.innerHTML = "";
@@ -62,6 +78,7 @@ function getPlayerBoardElement(player) {
 
 function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
   const squareElement = document.createElement("div");
+  const gameOver = isGameOver();
   squareElement.classList.add("square");
 
   if (cellContent === "miss") {
@@ -74,17 +91,35 @@ function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
     squareElement.innerHTML = `<p>?</p>`;
   }
 
-  if (isMachine) {
+  if (isMachine && !gameOver) {
     squareElement.addEventListener("click", () => {
       playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
       playerTwo.attackEnemyPlayer(playerOne.gameBoard);
 
-      displayBoard(playerOne.gameBoard.board, "one", false);
-      displayBoard(playerTwo.gameBoard.board, "two", true);
+      updateBoard(true);
     });
   }
 
   return squareElement;
+}
+
+function updateBoard(vsMachine) {
+  displayBoard(playerOne.gameBoard.board, "one", false);
+  displayBoard(playerTwo.gameBoard.board, "two", vsMachine);
+  displayMessages();
+}
+
+// checks if the game is over
+function isGameOver() {
+  const playerOneScore = checkSunkenShips(playerTwo);
+  const playerTwoScore = checkSunkenShips(playerOne);
+
+  if (playerOneScore == 5 || playerTwoScore == 5) return true;
+}
+
+// helper function for isGameOver
+function checkSunkenShips(player) {
+  return player.gameBoard.shipsSunk;
 }
 
 greetings();
