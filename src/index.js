@@ -5,8 +5,7 @@ import "./styles.css";
 
 // initializes two players: a human player and a machine player
 const playerOne = new Player();
-const playerTwo = new Player(true);
-
+let playerTwo = null;
 let playerTurn = true;
 
 function greetings() {
@@ -23,9 +22,7 @@ function greetings() {
 function createGameModeButton(container, difficulty) {
   const gameModeButton = document.createElement("button");
   gameModeButton.textContent = difficulty;
-  gameModeButton.addEventListener("click", setupGame);
-
-  // add condition to turn playerTwo into hard mode settings if the button clicked was "hard"
+  gameModeButton.addEventListener("click", () => setupGame(difficulty));
 
   container.appendChild(gameModeButton);
 }
@@ -68,6 +65,7 @@ function displayMessage(message) {
 function displayBoard(board, player, isMachine) {
   const boardElement = getPlayerBoardElement(player);
   boardElement.innerHTML = "";
+  boardElement.className = "grid";
 
   board.forEach((row, rowIndex) => {
     row.forEach((cell, columnIndex) => {
@@ -124,6 +122,7 @@ function updateBoard(vsMachine) {
 
   if (gameOver) {
     const playerOneScore = checkSunkenShips(playerTwo);
+
     playerOneScore == 5
       ? displayMessage("You win!")
       : displayMessage("The Machine wins...");
@@ -155,13 +154,36 @@ function checkSunkenShips(player) {
   return player.gameBoard.shipsSunk;
 }
 
+function displayHints() {
+  const hintsContainer = document.getElementById("hints");
+
+  hintsContainer.innerHTML = `
+    <p>
+      To win this game, you must sink all enemy ships (5). To do so, click
+      on any square on the machine's board that does not have an emoji.
+    </p>
+    <p>
+      If you hit an enemy ship, you'll see this: ✔️. If you miss, you'll see
+      this: ❌.
+    </p>
+    <p>
+      Each player has 5 ships. Try and sink all the machine's ships before
+      they sink yours!
+    </p>
+    <p>PS: I doubt you can win this game on hard settings. If you do, please let me know.</p>
+  `;
+}
+
 // game setup will be called once a player clicks on a button brought up by greetings()
-function setupGame() {
+function setupGame(difficulty) {
+  playerTwo = difficulty === "Easy" ? new Player(true) : new Player(true, true);
+
   hideGreetings();
   placeShips();
   displayGameBoardTitles();
   displayGameBoards();
   displayMessage("Good luck!");
+  displayHints();
 }
 
 greetings();

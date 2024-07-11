@@ -32,12 +32,14 @@ class Player {
 
     while (!validAttack) {
       try {
-        const row = !this.targetedShip
-          ? Math.floor(Math.random() * 10)
-          : directAttack[0];
-        const col = !this.targetedShip
-          ? Math.floor(Math.random() * 10)
-          : directAttack[1];
+        const row =
+          this.targetedShip && this.hardMode
+            ? directAttack[0]
+            : Math.floor(Math.random() * 10);
+        const col =
+          this.targetedShip && this.hardMode
+            ? directAttack[1]
+            : Math.floor(Math.random() * 10);
 
         const square = target.board[row][col];
 
