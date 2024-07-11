@@ -7,20 +7,27 @@ import "./styles.css";
 const playerOne = new Player();
 const playerTwo = new Player(true);
 
-// This section handles game setup - the initial greetings, player picking, and ship placement
+let playerTurn = true;
+
 function greetings() {
   const greetingsElement = document.getElementById("greetings");
-  const easyMode = document.createElement("button");
-  easyMode.textContent = "Easy";
-
-  easyMode.addEventListener("click", setupGame);
-
   greetingsElement.innerHTML = `
     <h1>Battleship</h1>
     <p>Choose Your Difficulty:</p>
   `;
 
-  greetingsElement.appendChild(easyMode);
+  createGameModeButton(greetingsElement, "Easy");
+  createGameModeButton(greetingsElement, "Hard");
+}
+
+function createGameModeButton(container, difficulty) {
+  const gameModeButton = document.createElement("button");
+  gameModeButton.textContent = difficulty;
+  gameModeButton.addEventListener("click", setupGame);
+
+  // add condition to turn playerTwo into hard mode settings if the button clicked was "hard"
+
+  container.appendChild(gameModeButton);
 }
 
 function hideGreetings() {
@@ -28,75 +35,34 @@ function hideGreetings() {
   greetingsElement.innerHTML = ``;
 }
 
-function setupGame() {
-  hideGreetings();
-  placeShips("player-one-ships");
-  placeShips("player-two-ships");
+function placeShips() {
+  playerOne.gameBoard.placeRandom();
+  playerTwo.gameBoard.placeRandom();
+}
+
+function displayGameBoardTitles() {
+  const playerOneBoardIndicator = document.getElementById("player-one");
+  playerOneBoardIndicator.insertAdjacentHTML(
+    "afterbegin",
+    "<h1>Your Board</h1>",
+  );
+
+  const playerTwoBoardIndicator = document.getElementById("player-two");
+  playerTwoBoardIndicator.insertAdjacentHTML(
+    "afterbegin",
+    "<h1>Machine Board</h1>",
+  );
+}
+
+function displayGameBoards() {
   displayBoard(playerOne.gameBoard.board, "one", false);
   displayBoard(playerTwo.gameBoard.board, "two", true);
-  displayMessages();
 }
 
-// this section will handle ship placement
-function placeShips(playerShips) {
-  const shipElement = document.getElementById(playerShips);
-
-  shipElement.innerHTML = `
-  <br></br>
-
-  <p>Cruiser</p>
-  <div class="ship">
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-  </div>
-
-  <p>Battleship</p>
-  <div class="ship">
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-  </div>
-
-  <p>Cruiser</p>
-  <div class="ship">
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-  </div>
-
-  <p>Submarine</p>
-  <div class="ship">
-    <div class="square">?</div>
-    <div class="square">?</div>
-    <div class="square">?</div>
-  </div>
-
-  <p>Destroyer</p>
-  <div class="ship">
-    <div class="square">?</div>
-    <div class="square">?</div>
-  </div>
-  `;
-
-  playerShips == "player-one-ships"
-    ? playerOne.gameBoard.placeRandom()
-    : playerTwo.gameBoard.placeRandom();
-}
-
-// This section handles the visuals of game (displaying messages, updating squares on click)
-function displayMessages() {
+function displayMessage(message) {
   const messagesElement = document.getElementById("messages");
-  const playerOneScore = checkSunkenShips(playerTwo);
-  const gameOver = isGameOver();
 
-  messagesElement.innerHTML = `Good luck!`;
-
-  if (gameOver)
-    messagesElement.innerHTML = `Game Over! ${playerOneScore == 5 ? "Player One Wins!" : "The Machine Wins!"}`;
+  messagesElement.innerHTML = `${message}`;
 }
 
 function displayBoard(board, player, isMachine) {
@@ -132,8 +98,6 @@ function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
   } else if (cellContent === "hit") {
     squareElement.innerHTML = `✔️`;
     squareElement.classList.add("hit");
-  } else {
-    squareElement.innerHTML = `<p>?</p>`;
   }
 
   if (!isMachine && cellContent) {
@@ -142,10 +106,12 @@ function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
 
   if (isMachine && !isGameOver()) {
     squareElement.addEventListener("click", () => {
-      playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
-      playerTwo.attackEnemyPlayer(playerOne.gameBoard);
+      if (playerTurn) {
+        playerTwo.gameBoard.receiveAttack([rowIndex, columnIndex]);
+        playerTwo.attackHumanPlayer(playerOne.gameBoard);
 
-      updateBoard(true);
+        updateBoard(true);
+      }
     });
   }
 
@@ -153,9 +119,28 @@ function createSquareElement(rowIndex, columnIndex, cellContent, isMachine) {
 }
 
 function updateBoard(vsMachine) {
-  displayBoard(playerOne.gameBoard.board, "one", false);
+  const gameOver = isGameOver();
+  playerTurn = false;
+
+  if (gameOver) {
+    const playerOneScore = checkSunkenShips(playerTwo);
+    playerOneScore == 5
+      ? displayMessage("You win!")
+      : displayMessage("The Machine wins...");
+
+    displayBoard(playerTwo.gameBoard.board, "two", vsMachine);
+    displayBoard(playerOne.gameBoard.board, "one", false);
+    return;
+  }
+
   displayBoard(playerTwo.gameBoard.board, "two", vsMachine);
-  displayMessages();
+  displayMessage("The machine is planning their next attack...");
+
+  setTimeout(() => {
+    displayBoard(playerOne.gameBoard.board, "one", false);
+    displayMessage("It's your turn!");
+    playerTurn = true;
+  }, 2000);
 }
 
 function isGameOver() {
@@ -168,6 +153,15 @@ function isGameOver() {
 // helper function for isGameOver
 function checkSunkenShips(player) {
   return player.gameBoard.shipsSunk;
+}
+
+// game setup will be called once a player clicks on a button brought up by greetings()
+function setupGame() {
+  hideGreetings();
+  placeShips();
+  displayGameBoardTitles();
+  displayGameBoards();
+  displayMessage("Good luck!");
 }
 
 greetings();
