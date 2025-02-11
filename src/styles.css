@@ -53,6 +53,12 @@ button:hover {
   padding-bottom: 2%;
 }
 
+@media (max-width: 768px) {
+  #boards {
+    flex-direction: column;
+  }
+}
+
 #player-one,
 #player-two {
   display: flex;
@@ -115,4 +121,10 @@ button:hover {
 
 .hit {
   background-color: green;
+}
+
+#hints {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
 }
